@@ -42,6 +42,6 @@ class Canvas extends Common {
     drawLeftMovement(leftMovement) {
         this.context.fillText(`${leftMovement}`, 520, 234);
     }
-};
+}
 
 export const canvas = new Canvas();

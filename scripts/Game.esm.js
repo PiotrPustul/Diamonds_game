@@ -10,12 +10,14 @@ import { canvas } from './Canvas.esm.js';
 import { media } from './Media.esm.js';
 import { GameState } from './GameState.esm.js';
 import { mouseController } from './MouseController.esm.js';
-import { Diamond, DIAMOND_SIZE, NUMBER_OF_DIAMONDS_TYPES } from './Diamond.esm.js';
+import { DIAMOND_SIZE, NUMBER_OF_DIAMONDS_TYPES } from './Diamond.esm.js';
 import { resultScreen } from './ResultScreen.esm.js';
 import { userData } from './UserData.esm.js';
+import { mainMenu } from './MainMenu.esm.js';
 
-const DIAMONDS_ARRAY_WIDTH = 8;
-const DIAMONDS_ARRAY_HEIGHT = DIAMONDS_ARRAY_WIDTH + 1;
+export const DIAMONDS_ARRAY_WIDTH = 8;
+
+const DIAMONDS_ARRAY_HEIGHT = DIAMONDS_ARRAY_WIDTH + 1; // with invisible first line
 const LAST_ELEMENT_DIAMONDS_ARRAY = DIAMONDS_ARRAY_WIDTH * DIAMONDS_ARRAY_HEIGHT - 1;
 const SWAPING_SPEED = 8;
 const TRANSPARCENCY_SPEED = 10;
@@ -31,6 +33,9 @@ class Game extends Common {
         window.removeEventListener(DATALOADED_EVENT_NAME, this.playLevel);
         this.gameState = new GameState(level, numberOfMovements, pointsToWin, board, media.diamondsSprite);
         this.changeVisibilityScreen(canvas.element, VISIBLE_SCREEN);
+        this.changeVisibilityScreen(mainMenu.miniSettingsLayerElement, VISIBLE_SCREEN);
+        media.isInLevel = true;
+        media.playBackgroundMusic();
         this.animate();
     }
 
@@ -39,7 +44,7 @@ class Game extends Common {
         this.handleMouseClick();
         this.findMatches();
         this.moveDiamonds();
-        this.hideAnimation()
+        this.hideAnimation();
         this.countScores();
         this.revertSwap();
         this.clearMatched();
@@ -87,13 +92,15 @@ class Game extends Common {
 
             if (
                 Math.abs(mouseController.firstClick.x - mouseController.secondClick.x) +
-                Math.abs(mouseController.firstClick.y - mouseController.secondClick.y) !== 1
+                Math.abs(mouseController.firstClick.y - mouseController.secondClick.y) !==
+                1
             ) {
                 return;
             }
 
             this.swapDiamonds();
 
+            media.playSwapSound();
             this.gameState.setIsSwaping(true);
             this.gameState.decreasePointsMovement();
             mouseController.state = 0;
@@ -236,14 +243,15 @@ class Game extends Common {
 
     checkPosibilityMovement() {
         if (this.gameState.getIsMoving()) {
-            return true;
+            return;
         }
 
-        this.isPossibleToMove = this.gameState.getGameBoard().some((diamond, index, diamonds) => {
+        this.isPossisbleToMove = this.gameState.getGameBoard().some((diamond, index, diamonds) => {
             if (diamond.kind === EMPTY_BLOCK) {
                 return false;
             }
-            //move right => check in row
+
+            // move right => check in row
             if (
                 index % DIAMONDS_ARRAY_WIDTH < DIAMONDS_ARRAY_WIDTH - 3
                 && diamond.kind === diamonds[index + 2].kind
@@ -251,7 +259,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move right => check if it's in the middle of the column
+
+            // move right => check if is in the middle of the column
             if (
                 index % DIAMONDS_ARRAY_WIDTH < DIAMONDS_ARRAY_WIDTH - 1
                 && Math.floor(index / DIAMONDS_ARRAY_WIDTH) > 1
@@ -261,7 +270,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move right => check if it's on the top of the column
+
+            // move right ==> check if is on the top of the column
             if (
                 index % DIAMONDS_ARRAY_WIDTH < DIAMONDS_ARRAY_WIDTH - 1
                 && Math.floor(index / DIAMONDS_ARRAY_WIDTH) < DIAMONDS_ARRAY_HEIGHT - 2
@@ -270,7 +280,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move right => check if it's on the bottom of the the column
+
+            // move right => check if is on the bottom of the column
             if (
                 index % DIAMONDS_ARRAY_WIDTH < DIAMONDS_ARRAY_WIDTH - 1
                 && Math.floor(index / DIAMONDS_ARRAY_WIDTH) > 2
@@ -279,7 +290,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move left => check if it's in the row
+
+            // move left => check in row
             if (
                 index % DIAMONDS_ARRAY_WIDTH > 2
                 && diamond.kind === diamonds[index - 2].kind
@@ -287,7 +299,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move left => check if it's in the middle of the column
+
+            // move left => check if is in the middle of the column
             if (
                 index % DIAMONDS_ARRAY_WIDTH
                 && Math.floor(index / DIAMONDS_ARRAY_WIDTH) > 1
@@ -297,7 +310,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move left => check if it's on the top of the column
+
+            // move left => check if is on the top of the column
             if (
                 index % DIAMONDS_ARRAY_WIDTH
                 && Math.floor(index / DIAMONDS_ARRAY_WIDTH) < DIAMONDS_ARRAY_HEIGHT - 2
@@ -306,16 +320,18 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move left => check if it's on the bottom of the column 
+
+            // move left => check if is on the bottom of the column
             if (
-                index % DIAMONDS_ARRAY_WIDTH
+                index & DIAMONDS_ARRAY_WIDTH
                 && Math.floor(index / DIAMONDS_ARRAY_WIDTH) > 2
                 && diamond.kind === diamonds[index - DIAMONDS_ARRAY_WIDTH - 1].kind
                 && diamond.kind === diamonds[index - DIAMONDS_ARRAY_WIDTH * 2 - 1].kind
             ) {
                 return true;
             }
-            //move down => check if it's in the column
+
+            // move down => check if is in column
             if (
                 Math.floor(index / DIAMONDS_ARRAY_WIDTH) < DIAMONDS_ARRAY_HEIGHT - 3
                 && diamond.kind === diamonds[index + DIAMONDS_ARRAY_WIDTH * 2].kind
@@ -323,7 +339,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            // move down => check if it's in the middle edge of the row 
+
+            // move down => check if is in the middle of the row
             if (
                 index % DIAMONDS_ARRAY_WIDTH
                 && index % DIAMONDS_ARRAY_WIDTH < DIAMONDS_ARRAY_WIDTH - 1
@@ -333,25 +350,28 @@ class Game extends Common {
             ) {
                 return true;
             }
-            // move down => check if it's in the left edge of the row 
+
+            // move down => check if is in the left edge of the row
             if (
                 index % DIAMONDS_ARRAY_WIDTH < DIAMONDS_ARRAY_WIDTH - 2
-                && Math.floor(index / DIAMONDS_ARRAY_WIDTH) < DIAMONDS_ARRAY_HEIGHT - 2
+                && Math.floor(index / DIAMONDS_ARRAY_WIDTH) < DIAMONDS_ARRAY_HEIGHT - 1
                 && diamond.kind === diamonds[index + DIAMONDS_ARRAY_WIDTH + 1].kind
                 && diamond.kind === diamonds[index + DIAMONDS_ARRAY_WIDTH + 2].kind
             ) {
                 return true;
             }
-            // move down => check if it's in the right edge of the row 
+
+            // move down => check if is in the right edge of the row
             if (
-                index && DIAMONDS_ARRAY_WIDTH > 1
+                index % DIAMONDS_ARRAY_WIDTH > 1
                 && Math.floor(index / DIAMONDS_ARRAY_WIDTH) < DIAMONDS_ARRAY_HEIGHT - 1
                 && diamond.kind === diamonds[index + DIAMONDS_ARRAY_WIDTH - 1].kind
                 && diamond.kind === diamonds[index + DIAMONDS_ARRAY_WIDTH - 2].kind
             ) {
                 return true;
             }
-            //move up => check if it's in the column 
+
+            // move up => check in column
             if (
                 Math.floor(index / DIAMONDS_ARRAY_WIDTH) > 3
                 && diamond.kind === diamonds[index - DIAMONDS_ARRAY_WIDTH * 2].kind
@@ -359,7 +379,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move up => check if it's the middle of the row 
+
+            // move up => check if is in the middle of the row
             if (
                 index % DIAMONDS_ARRAY_WIDTH
                 && index % DIAMONDS_ARRAY_WIDTH < DIAMONDS_ARRAY_WIDTH - 1
@@ -369,7 +390,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move up => check if it's the left edge of the row 
+
+            // move up => check if is in the left edge of the row
             if (
                 index % DIAMONDS_ARRAY_WIDTH < DIAMONDS_ARRAY_WIDTH - 2
                 && Math.floor(index / DIAMONDS_ARRAY_WIDTH) > 1
@@ -378,7 +400,8 @@ class Game extends Common {
             ) {
                 return true;
             }
-            //move up => check if it's the right edge of the row 
+
+            // move up => check if is in the right edge of the row
             if (
                 index % DIAMONDS_ARRAY_WIDTH > 1
                 && Math.floor(index / DIAMONDS_ARRAY_WIDTH) > 1
@@ -391,13 +414,15 @@ class Game extends Common {
             return false;
         });
 
-        if (!this.isPossibleToMove) {
+        if (!this.isPossisbleToMove) {
             this.gameState.mixDiamonds();
         }
     }
 
     checkEndOfGame() {
         if (!this.gameState.getLeftMovement() && !this.gameState.getIsMoving() && !this.gameState.getIsSwaping()) {
+            media.isInLevel = false;
+            media.stopBackgroundMusic();
             const isPlayerWinner = this.gameState.isPlayerWinner();
             const currentLevel = Number(this.gameState.level);
 

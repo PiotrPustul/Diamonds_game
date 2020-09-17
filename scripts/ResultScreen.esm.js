@@ -9,7 +9,7 @@ const RESULT_SCREEN_BACK_BUTTON_ID = 'js-back-to-levels';
 const RESULT_SCREEN_END_SCREEN_ID = 'js-end-screen';
 const RESULT_SCREEN_GAME_WIN_CLASS = 'end-screen--is-win';
 const RESULT_SCREEN_HEADER_ID = 'js-game-result';
-const RESULT_SCREEN_HIGH_SCORE_ID = 'js-high-scores';
+const RESULT_SCREEN_HIGH_SCORES_ID = 'js-high-scores';
 const RESULT_SCREEN_RESTART_LEVEL_BUTTON_ID = 'js-restart-level';
 const RESULT_SCREEN_USER_POINTS_ID = 'js-user-points';
 
@@ -22,7 +22,7 @@ class ResultScreen extends Common {
     bindToElements() {
         this.resultTextElement = this.bindToElement(RESULT_SCREEN_HEADER_ID);
         this.userPointsElement = this.bindToElement(RESULT_SCREEN_USER_POINTS_ID);
-        this.highScoresElement = this.bindToElement(RESULT_SCREEN_HIGH_SCORE_ID);
+        this.highScoresElement = this.bindToElement(RESULT_SCREEN_HIGH_SCORES_ID);
 
         const backButtonElement = this.bindToElement(RESULT_SCREEN_BACK_BUTTON_ID);
         const restartButtonElement = this.bindToElement(RESULT_SCREEN_RESTART_LEVEL_BUTTON_ID);
@@ -39,21 +39,22 @@ class ResultScreen extends Common {
         }
 
         this.changeVisibilityScreen(this.element, VISIBLE_SCREEN);
-        this.resultTextElement.textContent = isGameWin ? 'Wygrałeś!' : 'Przegrałeś!';
+        this.resultTextElement.textContent = isGameWin ? 'WYGRAŁEŚ!' : 'PRZEGRAŁEŚ!';
         this.userPointsElement.textContent = String(playerPoints);
         this.highScoresElement.textContent = String(userData.getHighScores(level));
+
     }
 
     backButtonClick() {
         this.changeVisibilityScreen(canvas.element, HIDDEN_SCREEN);
         this.changeVisibilityScreen(this.element, HIDDEN_SCREEN);
-
+        this.changeVisibilityScreen(mainMenu.miniSettingsLayerElement, HIDDEN_SCREEN);
         mainMenu.showLevelScreen();
     }
 
     restartLevelClick() {
         this.changeVisibilityScreen(this.element, HIDDEN_SCREEN);
-        levelSelect.loadLevel(game.gameState.level)
+        levelSelect.loadLevel(game.gameState.level);
     }
 }
 

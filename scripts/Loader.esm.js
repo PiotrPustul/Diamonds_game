@@ -1,5 +1,4 @@
-import { Common, HIDDEN_SCREEN, VISIBLE_SCREEN } from './Common.esm.js';
-
+import { Common, VISIBLE_SCREEN, HIDDEN_SCREEN } from './Common.esm.js';
 
 const LOAD_CURRENT_ID = 'js-loading-screen-current';
 const LOAD_TOTAL_ID = 'js-loading-screen-total';
@@ -32,6 +31,19 @@ class Loader extends Common {
         return image;
     }
 
+    loadSound(soundUrl) {
+        this.changeVisibilityScreen(this.element, VISIBLE_SCREEN);
+        this.isAllLoaded = false;
+        this.totalCounter++;
+
+        const audio = new Audio();
+
+        audio.addEventListener('canplaythrough', event => this.itemLoaded(event), false);
+        audio.src = soundUrl;
+
+        return audio;
+    }
+
     itemLoaded(event) {
         event.target.removeEventListener(event.type, this.itemLoaded, false);
         this.loadedCounter++;
@@ -49,6 +61,6 @@ class Loader extends Common {
         this.loadedCounter = 0;
         this.totalCounter = 0;
     }
-};
+}
 
 export const loader = new Loader();
