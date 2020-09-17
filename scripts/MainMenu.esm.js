@@ -12,41 +12,41 @@ const START_SCREEN_SETTINGS_BUTTON_ID = 'js-settings-button';
 export const SCALE_PROPERTY = '--scale-value';
 
 class MainMenu extends Common {
-    constructor() {
-        super(START_SCREEN_ID);
-        this.bindToGameElements();
-        this.resizeGameWindow();
-        window.addEventListener('resize', this.resizeGameWindow);
-    }
+	constructor() {
+		super(START_SCREEN_ID);
+		this.bindToGameElements();
+		this.resizeGameWindow();
+		window.addEventListener('resize', this.resizeGameWindow);
+	}
 
-    bindToGameElements() {
-        const gameStartButton = this.bindToElement(START_SCREEN_GAME_BUTTON_ID);
-        const gameSettingsButton = this.bindToElement(START_SCREEN_SETTINGS_BUTTON_ID);
-        const miniSettingsButtonElement = this.bindToElement(MINI_SETTINGS_BUTTON_ID);
+	bindToGameElements() {
+		const gameStartButton = this.bindToElement(START_SCREEN_GAME_BUTTON_ID);
+		const gameSettingsButton = this.bindToElement(START_SCREEN_SETTINGS_BUTTON_ID);
+		const miniSettingsButtonElement = this.bindToElement(MINI_SETTINGS_BUTTON_ID);
 
-        this.miniSettingsLayerElement = this.bindToElement(MINI_SETTINGS_LAYER_ID);
+		this.miniSettingsLayerElement = this.bindToElement(MINI_SETTINGS_LAYER_ID);
 
-        gameStartButton.addEventListener('click', () => this.showLevelScreen());
-        gameSettingsButton.addEventListener('click', () => this.showSettingsScreen());
-        miniSettingsButtonElement.addEventListener('click', () => this.showSettingsScreen());
-    }
+		gameStartButton.addEventListener('click', () => this.showLevelScreen()); 
+		gameSettingsButton.addEventListener('click', () => this.showSettingsScreen());
+		miniSettingsButtonElement.addEventListener('click', () => this.showSettingsScreen());
+	}
 
-    showLevelScreen() {
-        levelSelect.createButtons();
-        this.changeVisibilityScreen(this.element, HIDDEN_SCREEN);
-        this.changeVisibilityScreen(levelSelect.element, VISIBLE_SCREEN);
-    }
+	showLevelScreen() {
+		levelSelect.createButtons();
+		this.changeVisibilityScreen(this.element, HIDDEN_SCREEN);
+		this.changeVisibilityScreen(levelSelect.element, VISIBLE_SCREEN);
+	}
 
-    showSettingsScreen() {
-        this.changeVisibilityScreen(settings.element, VISIBLE_SCREEN);
-    }
+	showSettingsScreen() {
+		this.changeVisibilityScreen(settings.element, VISIBLE_SCREEN);
+	}
 
-    resizeGameWindow() {
-        const { innerWidth: width, innerHeight: height } = window;
-        const scale = Math.min(width / CANVAS_WIDTH, height / CANVAS_HEIGHT);
+	resizeGameWindow() {
+		const { innerWidth: width, innerHeight: height } = window;
+		const scale = Math.min(width / CANVAS_WIDTH, height / CANVAS_HEIGHT);
 
-        document.documentElement.style.setProperty(SCALE_PROPERTY, scale);
-    }
+		document.documentElement.style.setProperty(SCALE_PROPERTY, scale);
+	}
 
 }
 

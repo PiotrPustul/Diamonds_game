@@ -7,60 +7,60 @@ const LOADER_ELEMENT_ID = 'js-loading-screen';
 export const DATALOADED_EVENT_NAME = 'dataLoaded';
 
 class Loader extends Common {
-    constructor() {
-        super(LOADER_ELEMENT_ID);
-        this.bindToElements();
-        this.clearFlags();
-    }
+	constructor() {
+		super(LOADER_ELEMENT_ID);
+		this.bindToElements();
+		this.clearFlags();
+	}
 
-    bindToElements() {
-        this.currentElement = this.bindToElement(LOAD_CURRENT_ID);
-        this.totalElement = this.bindToElement(LOAD_TOTAL_ID);
-    }
+	bindToElements() {
+		this.currentElement = this.bindToElement(LOAD_CURRENT_ID);
+		this.totalElement = this.bindToElement(LOAD_TOTAL_ID);
+	}
 
-    loadImage(imageUrl) {
-        this.changeVisibilityScreen(this.element, VISIBLE_SCREEN);
-        this.isAllLoaded = false;
-        this.totalCounter++;
-        this.totalElement = this.totalCounter;
-        const image = new Image();
+	loadImage(imageUrl) {
+		this.changeVisibilityScreen(this.element, VISIBLE_SCREEN);
+		this.isAllLoaded = false;
+		this.totalCounter++;
+		this.totalElement = this.totalCounter;
+		const image = new Image();
 
-        image.src = imageUrl;
-        image.addEventListener('load', event => this.itemLoaded(event), false);
+		image.src = imageUrl;
+		image.addEventListener('load', event => this.itemLoaded(event), false);
 
-        return image;
-    }
+		return image;
+	}
 
-    loadSound(soundUrl) {
-        this.changeVisibilityScreen(this.element, VISIBLE_SCREEN);
-        this.isAllLoaded = false;
-        this.totalCounter++;
+	loadSound(soundUrl) {
+		this.changeVisibilityScreen(this.element, VISIBLE_SCREEN);
+		this.isAllLoaded = false;
+		this.totalCounter++;
 
-        const audio = new Audio();
+		const audio = new Audio();
 
-        audio.addEventListener('canplaythrough', event => this.itemLoaded(event), false);
-        audio.src = soundUrl;
+		audio.addEventListener('canplaythrough', event => this.itemLoaded(event), false);
+		audio.src = soundUrl;
 
-        return audio;
-    }
+		return audio;
+	}
 
-    itemLoaded(event) {
-        event.target.removeEventListener(event.type, this.itemLoaded, false);
-        this.loadedCounter++;
-        this.currentElement.textContent = this.loadedCounter;
+	itemLoaded(event) {
+		event.target.removeEventListener(event.type, this.itemLoaded, false);
+		this.loadedCounter++;
+		this.currentElement.textContent = this.loadedCounter;
 
-        if (this.loadedCounter === this.totalCounter) {
-            this.clearFlags();
-            this.changeVisibilityScreen(this.element, HIDDEN_SCREEN);
-            window.dispatchEvent(new CustomEvent(DATALOADED_EVENT_NAME));
-        }
-    }
+		if (this.loadedCounter === this.totalCounter) {
+			this.clearFlags();
+			this.changeVisibilityScreen(this.element, HIDDEN_SCREEN);
+			window.dispatchEvent(new CustomEvent(DATALOADED_EVENT_NAME));
+		}
+	}
 
-    clearFlags() {
-        this.isAllLoaded = true;
-        this.loadedCounter = 0;
-        this.totalCounter = 0;
-    }
+	clearFlags() {
+		this.isAllLoaded = true;
+		this.loadedCounter = 0;
+		this.totalCounter = 0;
+	}
 }
 
 export const loader = new Loader();
